@@ -165,6 +165,16 @@ HSV convertPixelToHSV(const int red, const int green, const int blue) {
     return HSV(hue, saturation, value);
 };
 
+/*
+    Convert image from RGB to HSV format
+
+    @param[in] image      RGB format image
+    @param[in] height     Image height
+    @param[in] width      Image width
+    @param[in] channels   Image channels per pixel
+
+    @return    HSVImage   Hue-saturation-value format image
+*/
 HSV* convertImageToHSV(unsigned char* image, const int height, const int width, const int channels){
     HSV* HSVImage = new HSV[height * width];
 
@@ -189,6 +199,14 @@ HSV* convertImageToHSV(unsigned char* image, const int height, const int width, 
     return HSVImage;
 }
 
+/*
+    Convert HSV pixel to equivalent rgb
+
+    @param[in]       pixel  HSV pixel of hue, saturation and value
+    @param[in/out]   red    Red pixel
+    @param[in/out]   green  Green pixel
+    @param[in/out]   blue   Blue pixel
+*/
 void HSVToRGB(const HSV& pixel, unsigned char& red, unsigned char& green, unsigned char& blue){
 
 //    const float chroma = pixel.value * pixel.saturation;
@@ -276,7 +294,17 @@ bool identityTest(const unsigned char* original, const unsigned char* identity, 
     return true;
 }
 
+/*
+    Convert Hue-Saturation-Value image to 3 channel RGB
 
+    @param[in] HSVImage   Image to be converted
+    @param[in] height     Image height
+    @param[in] width      Image width
+    @param[in] channels   Image channels per pixel
+
+    @return    rgbImage   3 channel rgb image 
+
+*/
 unsigned char* convertHSVToRGBImage(HSV* HSVImage, const int height, const int width, const int channels){
     unsigned char* rgbImage = new unsigned char[height * width * channels];
 
