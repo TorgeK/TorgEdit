@@ -31,6 +31,8 @@ int main(int argc, char* argv[]){
 
     HSV* HSVImage = convertImageToHSV(image, height, width, channels);
 
+    adjustHue(HSVImage, 390.0f, height, width);
+
     unsigned char* identity = convertHSVToRGBImage(HSVImage, height, width, channels);
 
     stbi_write_jpg("identity_test.jpg", width, height, channels, identity, 100);

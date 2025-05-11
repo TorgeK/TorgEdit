@@ -313,3 +313,23 @@ unsigned char* convertHSVToRGBImage(HSV* HSVImage, const int height, const int w
 
     return rgbImage;
 }
+
+/*
+    Adjust image hue 
+
+    @param[in/out] image          HSV image
+    @param[in]     hueAdjustment  Degrees of hue adjustment [-360.0, 360.0]
+    @param[in]     height         Image height
+    @param[in]     width          Image width
+*/
+void adjustHue(HSV* image, const float hueAdjustment, const int height, const int width){
+
+    for (int i = 0; i < height * width; ++i){
+        if (hueAdjustment > 0){
+            image[i].hue = std::fmod(image[i].hue + hueAdjustment, 360.0f);
+        }
+        else{
+            image[i].hue = std::fmod(image[i].hue + hueAdjustment, 360.0f) + 360.0f;
+        }
+    }
+}
