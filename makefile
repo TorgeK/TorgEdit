@@ -1,4 +1,4 @@
-CXXFLAGS = -std=c++17 -O3
+CXXFLAGS = -std=c++17 
 
 .PHONY: all 
 all: main

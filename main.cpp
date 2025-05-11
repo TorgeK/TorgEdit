@@ -16,7 +16,7 @@ struct HSV {
     float saturation;
     float value;
 
-    HSV() : hue(0), saturation(0), value(0) {};
+    HSV() : hue(0.0f), saturation(0.0f), value(0.0f) {};
     HSV(float hue, float saturation, float value) : hue(hue), saturation(saturation), value(value) {};
 };
 
@@ -136,12 +136,12 @@ HSV convertPixelToHSV(const int red, const int green, const int blue) {
     const float delta = colorMax - colorMin;
     const float value = colorMax;    
     
-    if (colorMax == colorMin){
+    if (delta < 1e-5){
         return HSV(0.0, 0.0, value);
     }
 
     float hue;
-    const float saturation = (delta / colorMax) * 100;
+    const float saturation = (delta / colorMax);
 
     const float newRed   = (colorMax - normalizedRed) / delta;
     const float newGreen = (colorMax - normalizedGreen) / delta;
@@ -162,7 +162,7 @@ HSV convertPixelToHSV(const int red, const int green, const int blue) {
     }
     hue = (hue / 6.0) * 360;
 
-    return HSV(hue, saturation, value * 100);
+    return HSV(hue, saturation, value);
 };
 
 HSV* convertImageToHSV(unsigned char* image, const int height, const int width, const int channels){
@@ -191,17 +191,25 @@ HSV* convertImageToHSV(unsigned char* image, const int height, const int width, 
 
 void HSVToRGB(const HSV& pixel, unsigned char& red, unsigned char& green, unsigned char& blue){
 
-    const float chroma = pixel.value * pixel.saturation;
+//    const float chroma = pixel.value * pixel.saturation;
+
+    const float value = pixel.value;
+    const float saturation = pixel.saturation;
+
+    const float chroma = value * saturation;
 
     // const float hueSegment = std::fmod(pixel.hue / 60.0f, 2.0f);
     // const float X = color * (1 - std::fabs(hueSegment - 1));
 
-    const float huePrime = pixel.hue / 60.0f;
+    float hue = std::fmod(pixel.hue, 360.0f);
+    if (hue < 0.0f) hue += 360.0f;
+
+    const float huePrime = hue / 60.0f;
     const float X = chroma * (1 - std::fabs(std::fmod(huePrime, 2.0f) - 1));
 
-    int redSubOne;
-    int greenSubOne;
-    int blueSubOne;
+    float redSubOne = 0.0f;
+    float greenSubOne = 0.0f;
+    float blueSubOne = 0.0f;
 
     if (huePrime >= 0 && huePrime < 1){
         redSubOne = chroma;
@@ -234,12 +242,39 @@ void HSVToRGB(const HSV& pixel, unsigned char& red, unsigned char& green, unsign
         blueSubOne = X;
     }
 
-    const float min = pixel.value - (chroma / 2);
+    const float min = value - chroma;
 
-    red = redSubOne + min;
-    green = greenSubOne + min;
-    blue = blueSubOne + min;
+    // red = static_cast<unsigned char>((redSubOne + min) * 255);
+    // green = static_cast<unsigned char>((greenSubOne + min) * 255);
+    // blue = static_cast<unsigned char>((blueSubOne + min) * 255);
+
+    red   = static_cast<unsigned char>(std::clamp((redSubOne + min) * 255.0f, 0.0f, 255.0f));
+    green = static_cast<unsigned char>(std::clamp((greenSubOne + min) * 255.0f, 0.0f, 255.0f));
+    blue  = static_cast<unsigned char>(std::clamp((blueSubOne + min) * 255.0f, 0.0f, 255.0f));
 };
+
+
+/*
+    Check image pixel integrity after converting from rgb-hsv-rgb within +/- 1 for each rgb value
+
+    @param[in] original    starting image pre-conversion
+    @param[in] identity    image post-conversion
+    @param[in] height      image height
+    @param[in] width       image width
+    @param[in] channels    image channels per pixel
+
+    @return    bool        image within +/- 1 sameness
+*/
+bool identityTest(const unsigned char* original, const unsigned char* identity, const int height, const int width, const int channels ){
+    for (int i = 0; i < height * width * channels; ++i){
+        if (original[i] - identity[i] > 1 || original[i] - identity[i] < -1){
+            std::cout << "Pixel " << i / 3 << "different" << int(original[i]) << " : " << int(identity[i]);
+            return false;
+        }
+    }
+    std::cout << "Image within +/-1 rgb value";
+    return true;
+}
 
 
 unsigned char* convertHSVToRGBImage(HSV* HSVImage, const int height, const int width, const int channels){
@@ -286,8 +321,12 @@ int main(int argc, char* argv[]){
     stbi_write_jpg("identity_test.jpg", width, height, channels, identity, 100);
 
 
-    delete HSVImage;
-    delete identity; 
+    identityTest(image, identity, height, width, channels);
+
+
+
+    delete[] HSVImage;
+    delete[] identity; 
 
 
     // if (argv[2] == std::string("jpg")){
