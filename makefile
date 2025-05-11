@@ -6,7 +6,7 @@ all: main
 main : main.o
 	g++ $(CXXFLAGS) $^ -o $@
 
-main.o : main.cpp stb_image.h stb_image_write.h
+main.o : main.cpp stb_image.h stb_image_write.h utilities.hpp
 	g++ $(CXXFLAGS) -c main.cpp -o main.o
 
 .PHONY: run
