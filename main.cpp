@@ -31,7 +31,11 @@ int main(int argc, char* argv[]){
 
     HSV* HSVImage = convertImageToHSV(image, height, width, channels);
 
-    adjustHue(HSVImage, 390.0f, height, width);
+    //adjustHue(HSVImage, 390.0f, height, width);
+    adjustSaturation(HSVImage, 100.0f, height, width);
+
+    adjustSaturation(HSVImage, 100.0f, height, width);
+
 
     unsigned char* identity = convertHSVToRGBImage(HSVImage, height, width, channels);
 

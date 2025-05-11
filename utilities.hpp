@@ -333,3 +333,18 @@ void adjustHue(HSV* image, const float hueAdjustment, const int height, const in
         }
     }
 }
+
+/*
+    Adjust image saturation
+
+    @param[in/out] image          HSV image
+    @param[in]     saturationAdjustment  Amount of saturation adjustment 
+    @param[in]     height         Image height
+    @param[in]     width          Image width
+*/
+void adjustSaturation(HSV* image, const float saturationAdjustment, const int height, const int width){
+
+    for (int i = 0; i < height * width; ++i){
+        image[i].saturation = std::clamp(image[i].saturation + saturationAdjustment, 0.0f, 100.0f);
+    }
+}
