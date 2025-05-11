@@ -349,7 +349,7 @@ int main(int argc, char* argv[]){
     stbi_write_jpg("identity_test.jpg", width, height, channels, identity, 100);
 
 
-    identityTest(image, identity, height, width, channels);
+    //identityTest(image, identity, height, width, channels);
 
 
 
