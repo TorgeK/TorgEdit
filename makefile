@@ -1,19 +1,31 @@
-CXXFLAGS = -std=c++17 
+# Compiler and flags
+CXX = g++
+CXXFLAGS = -Iimgui -Iimgui/backends -Wall -std=c++17
+LDFLAGS = -lglfw -lGLEW -lGL
 
-.PHONY: all 
-all: main
+# ImGui source files
+IMGUI_DIR = imgui
+IMGUI_BACKENDS = $(IMGUI_DIR)/backends
+IMGUI_SRC = \
+	$(IMGUI_DIR)/imgui.cpp \
+	$(IMGUI_DIR)/imgui_draw.cpp \
+	$(IMGUI_DIR)/imgui_tables.cpp \
+	$(IMGUI_DIR)/imgui_widgets.cpp \
+	$(IMGUI_DIR)/imgui_demo.cpp \
+	$(IMGUI_BACKENDS)/imgui_impl_glfw.cpp \
+	$(IMGUI_BACKENDS)/imgui_impl_opengl3.cpp
 
-main : main.o
-	g++ $(CXXFLAGS) $^ -o $@
+# Object files
+OBJS = main.o $(IMGUI_SRC:.cpp=.o)
 
-main.o : main.cpp stb_image.h stb_image_write.h utilities.hpp
-	g++ $(CXXFLAGS) -c main.cpp -o main.o
+# Target
+all: image_editor
 
-.PHONY: run
-run : main
-	./main test.jpg jpg -50 0 0 1.5
+image_editor: $(OBJS)
+	$(CXX) -o $@ $(OBJS) $(LDFLAGS)
 
-.PHONY: clean
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 clean:
-	rm -f main main.o
-
+	rm -f *.o $(IMGUI_DIR)/*.o $(IMGUI_BACKENDS)/*.o image_editor
