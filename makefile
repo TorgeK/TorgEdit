@@ -16,7 +16,7 @@ IMGUI_SRC = \
 	$(IMGUI_BACKENDS)/imgui_impl_opengl3.cpp
 
 # Object files
-OBJS = main.o $(IMGUI_SRC:.cpp=.o)
+OBJS = main.o shader.o $(IMGUI_SRC:.cpp=.o)
 
 # Target
 all: image_editor
@@ -29,3 +29,6 @@ image_editor: $(OBJS)
 
 clean:
 	rm -f *.o $(IMGUI_DIR)/*.o $(IMGUI_BACKENDS)/*.o image_editor
+
+run:
+	./image_editor

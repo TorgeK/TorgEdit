@@ -4,6 +4,8 @@
 #include <vector>
 #include <chrono>
 #include <cmath>
+#include <GL/glew.h>
+#include <iostream>
 
 struct HSV {
     float hue;

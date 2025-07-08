@@ -5,6 +5,8 @@
 #include <GLFW/glfw3.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "utilities.hpp"
+#include "shader.hpp"
 
 #include <iostream>
 
@@ -41,7 +43,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+    //glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
     GLFWwindow* window = glfwCreateWindow(1900, 1000, "TorgEdit", nullptr, nullptr);
     if (!window) return -1;
@@ -74,6 +76,8 @@ int main() {
     float saturation = 1.0f;
     float brightness = 1.0f;
 
+    int contrast = 0;
+
     // Main loop
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -88,16 +92,17 @@ int main() {
         ImGui::SliderFloat("Hue", &hueShift, 0.0f, 360.0f);
         ImGui::SliderFloat("Saturation", &saturation, 0.0f, 2.0f);
         ImGui::SliderFloat("Brightness", &brightness, 0.0f, 2.0f);
+        ImGui::SliderInt("Contrast", &contrast, -5, 5);
         if (ImGui::Button("Apply Filter")) {
-            // Hook this up to your HSV conversion code
-            std::cout << "Apply HSV filter here\n";
+            
         }
         ImGui::End();
 
         // Image window
         ImGui::Begin("Image Preview");
         ImGui::Text("Image size: %dx%d", imageWidth, imageHeight);
-        ImGui::Image((ImTextureID)imageTexture, ImVec2((float)imageWidth, (float)imageHeight));
+        //ImGui::Image((ImTextureID)imageTexture, ImVec2((float)imageWidth, (float)imageHeight));
+        ImGui::Image((ImTextureID)imageTexture, ImVec2(500.0f, 500.0f));
         ImGui::End();
 
         // Rendering
