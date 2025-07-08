@@ -47,3 +47,22 @@ void Shader::compileShader() {
     }
 
 }
+
+void Shader::createShaderProgram() {
+    int success;
+    char infoLog[512];
+    ID = glCreateProgram();
+
+    glAttachShader(ID, shader);
+    glLinkProgram(ID);
+    
+    // print linking errors
+    glGetProgramiv(ID, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(ID, 512, NULL, infoLog);
+        std::cerr << "Error: failed to link shader program" << infoLog << std::endl;
+    }
+
+    // delete shaders once linked to program
+    glDeleteShader(shader);
+}
