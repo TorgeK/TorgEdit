@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <GL/glew.h>
 #include "shader.hpp"
 
 void Shader::loadShaderFromFile(const char* shaderPath) {
@@ -24,8 +25,25 @@ void Shader::loadShaderFromFile(const char* shaderPath) {
         shaderCode = shaderStream.str();
     }
     catch(std::ifstream::failure e) {
-        std::cout << "Error: failed to read shader" << std::endl; 
+        std::cerr << "Error: failed to read shader" << std::endl; 
     }
 
-    const char* rawShaderCode = shaderCode.c_str();
+    rawShaderCode = shaderCode.c_str();
+}
+
+void Shader::compileShader() {
+    int success;
+    char infoLog[512];
+
+    shader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(shader, 1, &rawShaderCode, NULL);
+    glCompileShader(shader);
+
+    // print compile errors
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(shader, 512, NULL, infoLog);
+        std::cerr << "Error: failed to compile shader" << infoLog << std::endl;
+    }
+
 }

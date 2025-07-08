@@ -7,8 +7,11 @@ public:
 
     void loadShaderFromFile(const char* shaderPath);
 
+    void compileShader();
+
 private:
-    char* rawShaderCode;
+    const char* rawShaderCode;
+    unsigned int shader;
 };
 
 #endif
